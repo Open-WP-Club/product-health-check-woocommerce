@@ -127,45 +127,55 @@ class WPHC_Admin_Page {
 			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'wc-product-health-check' ) ), 403 );
 		}
 
-		$force = isset( $_POST['force'] ) && '1' === sanitize_text_field( wp_unslash( $_POST['force'] ) );
+		try {
+			$force = isset( $_POST['force'] ) && '1' === sanitize_text_field( wp_unslash( $_POST['force'] ) );
 
-		// Sanitize enabled checks from POST.
-		$enabled_checks = array();
-		if ( ! empty( $_POST['checks'] ) && is_array( $_POST['checks'] ) ) {
-			$all_types = WPHC_Health_Checker::all_check_types();
-			foreach ( array_map( 'sanitize_key', wp_unslash( $_POST['checks'] ) ) as $check ) {
-				if ( in_array( $check, $all_types, true ) ) {
-					$enabled_checks[] = $check;
+			// Sanitize enabled checks from POST.
+			$enabled_checks = array();
+			if ( ! empty( $_POST['checks'] ) && is_array( $_POST['checks'] ) ) {
+				$all_types = WPHC_Health_Checker::all_check_types();
+				foreach ( array_map( 'sanitize_key', wp_unslash( $_POST['checks'] ) ) as $check ) {
+					if ( in_array( $check, $all_types, true ) ) {
+						$enabled_checks[] = $check;
+					}
 				}
 			}
+
+			if ( $force ) {
+				$this->checker->clear_cache();
+			}
+
+			$data = $this->checker->run( $force, $enabled_checks );
+
+			ob_start();
+			$this->render_summary( $data );
+			$summary_html = ob_get_clean();
+
+			ob_start();
+			$this->render_table( $data );
+			$table_html = ob_get_clean();
+
+			$skus = $data['skus'] ?? array();
+
+			wp_send_json_success(
+				array(
+					'summary'  => $summary_html,
+					'table'    => $table_html,
+					'total'    => count( $data['issues'] ),
+					'skus'     => implode( ', ', array_map( 'esc_html', $skus ) ),
+					'skuCount' => count( $skus ),
+					'nonce'    => wp_create_nonce( self::AJAX_ACTION ),
+				)
+			);
+		} catch ( \Throwable $e ) {
+			wp_send_json_error(
+				array(
+					'message' => $e->getMessage(),
+					'file'    => $e->getFile(),
+					'line'    => $e->getLine(),
+				)
+			);
 		}
-
-		if ( $force ) {
-			$this->checker->clear_cache();
-		}
-
-		$data = $this->checker->run( $force, $enabled_checks );
-
-		ob_start();
-		$this->render_summary( $data );
-		$summary_html = ob_get_clean();
-
-		ob_start();
-		$this->render_table( $data );
-		$table_html = ob_get_clean();
-
-		$skus = $data['skus'] ?? array();
-
-		wp_send_json_success(
-			array(
-				'summary'  => $summary_html,
-				'table'    => $table_html,
-				'total'    => count( $data['issues'] ),
-				'skus'     => implode( ', ', array_map( 'esc_html', $skus ) ),
-				'skuCount' => count( $skus ),
-				'nonce'    => wp_create_nonce( self::AJAX_ACTION ),
-			)
-		);
 	}
 
 	/**

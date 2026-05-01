@@ -97,9 +97,13 @@
 				var hasIssues = response.data.total > 0;
 				setDone( hasIssues ? data.i18n.scanComplete : data.i18n.noIssues, hasIssues );
 			} else {
-				var errMsg = ( response.data && response.data.message )
-					? response.data.message
-					: data.i18n.scanFailed;
+				var errMsg = data.i18n.scanFailed;
+				if ( response.data && response.data.message ) {
+					errMsg = response.data.message;
+					if ( response.data.file ) {
+						errMsg += ' (' + response.data.file + ':' + response.data.line + ')';
+					}
+				}
 				setDone( errMsg, false );
 			}
 		} )
