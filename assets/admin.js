@@ -74,6 +74,12 @@
 		} )
 		.done( function ( response ) {
 			if ( response.success ) {
+				// Refresh nonce so subsequent scans work even if the previous
+				// one invalidated it (e.g. single-use nonce security plugins).
+				if ( response.data.nonce ) {
+					data.nonce = response.data.nonce;
+				}
+
 				$summaryWrap.html( response.data.summary );
 				$tableWrap.html( response.data.table );
 
@@ -183,6 +189,10 @@
 	------------------------------------------------------------------------- */
 
 	$csvBtn.on( 'click', function () {
+		// Check all boxes so the label state is consistent after export.
+		$( '.wphc-check' ).prop( 'checked', true );
+		$toggleAll.text( data.i18n.deselectAll );
+
 		var url = data.ajaxUrl +
 			'?action=' + encodeURIComponent( data.csvAction ) +
 			'&nonce='  + encodeURIComponent( data.csvNonce );
@@ -245,6 +255,10 @@
 	/* -------------------------------------------------------------------------
 	   Init
 	------------------------------------------------------------------------- */
+
+	// Force all checkboxes checked on load — prevents browser from restoring a
+	// previous unchecked state via form autocomplete.
+	$( '.wphc-check' ).prop( 'checked', true );
 
 	applyFilter( $filterSel.val() );
 

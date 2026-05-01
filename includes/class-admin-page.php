@@ -154,13 +154,16 @@ class WPHC_Admin_Page {
 		$this->render_table( $data );
 		$table_html = ob_get_clean();
 
+		$skus = $data['skus'] ?? array();
+
 		wp_send_json_success(
 			array(
-				'summary' => $summary_html,
-				'table'   => $table_html,
-				'total'   => count( $data['issues'] ),
-				'skus'    => implode( ', ', array_map( 'esc_html', $data['skus'] ) ),
-				'skuCount'=> count( $data['skus'] ),
+				'summary'  => $summary_html,
+				'table'    => $table_html,
+				'total'    => count( $data['issues'] ),
+				'skus'     => implode( ', ', array_map( 'esc_html', $skus ) ),
+				'skuCount' => count( $skus ),
+				'nonce'    => wp_create_nonce( self::AJAX_ACTION ),
 			)
 		);
 	}
@@ -175,10 +178,8 @@ class WPHC_Admin_Page {
 			wp_die( esc_html__( 'Permission denied.', 'wc-product-health-check' ), 403 );
 		}
 
-		$data = get_transient( WPHC_Health_Checker::TRANSIENT_KEY );
-		if ( false === $data || empty( $data['issues'] ) ) {
-			wp_die( esc_html__( 'No scan data available. Please run a scan first.', 'wc-product-health-check' ) );
-		}
+		// Always export with all checks — runs scan if full cache not available.
+		$data = $this->checker->run( false, array() );
 
 		$labels   = WPHC_Health_Checker::get_issue_labels();
 		$filename = 'product-health-check-' . gmdate( 'Y-m-d' ) . '.csv';
@@ -233,7 +234,7 @@ class WPHC_Admin_Page {
 				<div class="wphc-checks-list">
 					<?php foreach ( $labels as $key => $label ) : ?>
 						<label class="wphc-check-item">
-							<input type="checkbox" class="wphc-check" name="wphc_checks[]" value="<?php echo esc_attr( $key ); ?>" checked />
+							<input type="checkbox" class="wphc-check" name="wphc_checks[]" value="<?php echo esc_attr( $key ); ?>" checked autocomplete="off" />
 							<?php echo esc_html( $label ); ?>
 						</label>
 					<?php endforeach; ?>

@@ -4,7 +4,7 @@
  * Plugin Name:       Product Health Check for WooCommerce
  * Plugin URI:        https://github.com/Open-WP-Club/product-health-check-woocommerce
  * Description:       Scans WooCommerce products for common issues such as missing images, empty SKUs, missing prices, and more.
- * Version:           1.1.0
+ * Version:           1.1.1
  * Requires at least: 5.8
  * Requires PHP:      7.4
  * Author:            OpenWPClub.com
@@ -17,7 +17,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WPHC_VERSION', '1.1.0' );
+define( 'WPHC_VERSION', '1.1.1' );
 define( 'WPHC_PLUGIN_FILE', __FILE__ );
 define( 'WPHC_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'WPHC_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
