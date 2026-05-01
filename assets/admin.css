@@ -1,0 +1,398 @@
+/* ==========================================================================
+   WooCommerce Product Health Check — Admin Styles
+   ========================================================================== */
+
+/* Wrap
+   ========================================================================== */
+.wphc-wrap {
+	max-width: 1200px;
+}
+
+.wphc-wrap h1 {
+	margin-bottom: 16px;
+}
+
+/* Toolbar
+   ========================================================================== */
+.wphc-toolbar {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin: 16px 0 24px;
+}
+
+.wphc-toolbar .button {
+	font-size: 13px;
+}
+
+.wphc-spinner {
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	border: 3px solid rgba(0, 115, 170, 0.25);
+	border-top-color: #0073aa;
+	border-radius: 50%;
+	animation: wphc-spin 0.7s linear infinite;
+	flex-shrink: 0;
+}
+
+@keyframes wphc-spin {
+	to { transform: rotate(360deg); }
+}
+
+.wphc-status {
+	font-style: italic;
+	color: #646970;
+	font-size: 13px;
+}
+
+.wphc-filter {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	margin-left: auto;
+}
+
+.wphc-filter label {
+	font-weight: 600;
+	color: #3c434a;
+	font-size: 13px;
+}
+
+.wphc-filter select {
+	font-size: 13px;
+}
+
+/* Summary Cards
+   ========================================================================== */
+.wphc-summary {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	margin-bottom: 8px;
+}
+
+.wphc-summary-card {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-width: 130px;
+	padding: 14px 20px;
+	border-radius: 6px;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	box-shadow: 0 1px 3px rgba(0,0,0,.06);
+	text-align: center;
+	transition: box-shadow 0.15s ease;
+}
+
+.wphc-summary-card:hover {
+	box-shadow: 0 2px 6px rgba(0,0,0,.1);
+}
+
+.wphc-card-total {
+	border-top: 3px solid #0073aa;
+}
+
+.wphc-card-issues {
+	border-top: 3px solid #d63638;
+}
+
+.wphc-card-type {
+	border-top: 3px solid #f0ad4e;
+}
+
+.wphc-card-number {
+	font-size: 28px;
+	font-weight: 700;
+	line-height: 1.1;
+	color: #3c434a;
+}
+
+.wphc-card-label {
+	font-size: 12px;
+	color: #646970;
+	margin-top: 4px;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.wphc-scanned-at {
+	color: #646970;
+	font-size: 12px;
+	margin: 4px 0 16px;
+}
+
+/* Issue Table
+   ========================================================================== */
+.wphc-issues-table {
+	margin-top: 16px;
+	table-layout: fixed;
+}
+
+.wphc-issues-table .wphc-col-product {
+	width: 25%;
+}
+
+.wphc-issues-table .wphc-col-type {
+	width: 18%;
+}
+
+.wphc-issues-table .wphc-col-detail {
+	width: 42%;
+}
+
+.wphc-issues-table .wphc-col-actions {
+	width: 15%;
+}
+
+.wphc-issues-table tbody tr {
+	transition: background 0.1s ease;
+}
+
+.wphc-issues-table tbody tr[data-severity="critical"] {
+	border-left: 3px solid #d63638;
+}
+
+.wphc-issues-table tbody tr[data-severity="warning"] {
+	border-left: 3px solid #f0ad4e;
+}
+
+.wphc-issues-table tbody tr[data-severity="info"] {
+	border-left: 3px solid #0073aa;
+}
+
+.wphc-product-name-repeat {
+	color: #999;
+	font-size: 12px;
+}
+
+/* Badges
+   ========================================================================== */
+.wphc-badge {
+	display: inline-block;
+	padding: 2px 8px;
+	border-radius: 12px;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	white-space: nowrap;
+}
+
+.wphc-badge--critical {
+	background: #fce8e8;
+	color: #c0392b;
+	border: 1px solid #f5c6c6;
+}
+
+.wphc-badge--warning {
+	background: #fef9e7;
+	color: #b7770d;
+	border: 1px solid #fde8a0;
+}
+
+.wphc-badge--info {
+	background: #e6f3fa;
+	color: #0073aa;
+	border: 1px solid #b3d7ed;
+}
+
+/* Empty / no data states
+   ========================================================================== */
+.wphc-no-data,
+.wphc-no-issues {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	padding: 24px 20px;
+	color: #3c434a;
+	font-size: 14px;
+	margin-top: 16px;
+}
+
+.wphc-no-issues {
+	border-left: 4px solid #00a32a;
+	color: #00a32a;
+	font-weight: 600;
+}
+
+/* Checks selector panel
+   ========================================================================== */
+.wphc-checks-panel {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	padding: 14px 18px;
+	margin: 16px 0 0;
+	display: flex;
+	align-items: flex-start;
+	flex-wrap: wrap;
+	gap: 10px 20px;
+}
+
+.wphc-checks-label {
+	font-size: 13px;
+	color: #3c434a;
+	padding-top: 2px;
+	white-space: nowrap;
+}
+
+.wphc-checks-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 20px;
+	flex: 1;
+}
+
+.wphc-check-item {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	font-size: 13px;
+	color: #3c434a;
+	cursor: pointer;
+	white-space: nowrap;
+}
+
+.wphc-check-item input[type="checkbox"] {
+	margin: 0;
+	cursor: pointer;
+}
+
+#wphc-toggle-all {
+	font-size: 12px;
+	color: #0073aa;
+	text-decoration: underline;
+	cursor: pointer;
+	padding: 0;
+	white-space: nowrap;
+	align-self: center;
+}
+
+#wphc-toggle-all:hover {
+	color: #005177;
+}
+
+/* SKU Export
+   ========================================================================== */
+.wphc-sku-export {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	padding: 16px 18px;
+	margin-top: 24px;
+}
+
+.wphc-sku-export-header {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 10px;
+	flex-wrap: wrap;
+}
+
+.wphc-sku-export-header strong {
+	font-size: 13px;
+	color: #3c434a;
+}
+
+.wphc-sku-count {
+	font-size: 12px;
+	color: #646970;
+	background: #f0f0f1;
+	border-radius: 10px;
+	padding: 1px 8px;
+}
+
+.wphc-copy-feedback {
+	font-size: 12px;
+	color: #00a32a;
+	font-weight: 600;
+}
+
+.wphc-sku-textarea {
+	width: 100%;
+	min-height: 80px;
+	font-family: monospace;
+	font-size: 12px;
+	line-height: 1.6;
+	color: #3c434a;
+	background: #f6f7f7;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	padding: 8px 10px;
+	resize: vertical;
+	box-sizing: border-box;
+}
+
+/* Hidden rows (filtered out)
+   ========================================================================== */
+.wphc-issues-table tbody tr.wphc-hidden {
+	display: none;
+}
+
+/* Responsive
+   ========================================================================== */
+@media screen and (max-width: 782px) {
+	.wphc-issues-table,
+	.wphc-issues-table thead,
+	.wphc-issues-table tbody,
+	.wphc-issues-table tfoot,
+	.wphc-issues-table tr,
+	.wphc-issues-table th,
+	.wphc-issues-table td {
+		display: block;
+		width: 100% !important;
+	}
+
+	.wphc-issues-table thead,
+	.wphc-issues-table tfoot {
+		display: none;
+	}
+
+	.wphc-issues-table tbody tr {
+		border: 1px solid #dcdcde;
+		border-radius: 4px;
+		margin-bottom: 10px;
+		padding: 8px;
+	}
+
+	.wphc-issues-table tbody tr[data-severity] {
+		border-left-width: 3px;
+	}
+
+	.wphc-issues-table tbody td {
+		padding: 4px 8px;
+	}
+
+	.wphc-issues-table tbody td::before {
+		font-weight: 700;
+		margin-right: 6px;
+		color: #3c434a;
+	}
+
+	.wphc-issues-table tbody td.wphc-col-product::before { content: "Product: "; }
+	.wphc-issues-table tbody td.wphc-col-type::before    { content: "Type: "; }
+	.wphc-issues-table tbody td.wphc-col-detail::before  { content: "Detail: "; }
+	.wphc-issues-table tbody td.wphc-col-actions::before { content: ""; }
+
+	.wphc-summary-card {
+		min-width: calc(50% - 6px);
+		flex: 1 1 calc(50% - 6px);
+	}
+
+	.wphc-filter {
+		margin-left: 0;
+		width: 100%;
+	}
+}
+
+@media screen and (max-width: 480px) {
+	.wphc-summary-card {
+		min-width: 100%;
+		flex: 1 1 100%;
+	}
+}
