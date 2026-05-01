@@ -263,6 +263,15 @@ class WPHC_Admin_Page {
 					<?php esc_html_e( 'Export CSV', 'wc-product-health-check' ); ?>
 				</button>
 
+				<div class="wphc-view-toggle" role="group">
+					<button id="wphc-view-full" class="button wphc-view-btn wphc-view-btn--active" data-view="full">
+						<?php esc_html_e( 'Full view', 'wc-product-health-check' ); ?>
+					</button>
+					<button id="wphc-view-sku" class="button wphc-view-btn" data-view="sku">
+						<?php esc_html_e( 'SKU only', 'wc-product-health-check' ); ?>
+					</button>
+				</div>
+
 				<span id="wphc-spinner" class="wphc-spinner" style="display:none;" aria-hidden="true"></span>
 				<span id="wphc-status" class="wphc-status" aria-live="polite"></span>
 
@@ -391,9 +400,10 @@ class WPHC_Admin_Page {
 			<thead>
 				<tr>
 					<th scope="col" class="wphc-col-product"><?php esc_html_e( 'Product', 'wc-product-health-check' ); ?></th>
-					<th scope="col" class="wphc-col-type"><?php esc_html_e( 'Issue Type', 'wc-product-health-check' ); ?></th>
-					<th scope="col" class="wphc-col-detail"><?php esc_html_e( 'Detail', 'wc-product-health-check' ); ?></th>
-					<th scope="col" class="wphc-col-modified"><?php esc_html_e( 'Last Modified', 'wc-product-health-check' ); ?></th>
+					<th scope="col" class="wphc-col-sku"><?php esc_html_e( 'SKU', 'wc-product-health-check' ); ?></th>
+					<th scope="col" class="wphc-col-type wphc-full-col"><?php esc_html_e( 'Issue Type', 'wc-product-health-check' ); ?></th>
+					<th scope="col" class="wphc-col-detail wphc-full-col"><?php esc_html_e( 'Detail', 'wc-product-health-check' ); ?></th>
+					<th scope="col" class="wphc-col-modified wphc-full-col"><?php esc_html_e( 'Last Modified', 'wc-product-health-check' ); ?></th>
 					<th scope="col" class="wphc-col-actions"><?php esc_html_e( 'Actions', 'wc-product-health-check' ); ?></th>
 				</tr>
 			</thead>
@@ -410,15 +420,22 @@ class WPHC_Admin_Page {
 									<span class="wphc-product-name-repeat" aria-hidden="true">— <?php echo esc_html( $issue['product_name'] ); ?></span>
 								<?php endif; ?>
 							</td>
-							<td class="wphc-col-type">
+							<td class="wphc-col-sku">
+								<?php if ( ! empty( $issue['sku'] ) ) : ?>
+									<code><?php echo esc_html( $issue['sku'] ); ?></code>
+								<?php else : ?>
+									<span class="wphc-no-sku">—</span>
+								<?php endif; ?>
+							</td>
+							<td class="wphc-col-type wphc-full-col">
 								<span class="wphc-badge wphc-badge--<?php echo esc_attr( $issue['severity'] ); ?>">
 									<?php echo esc_html( $labels[ $issue['type'] ] ?? $issue['type'] ); ?>
 								</span>
 							</td>
-							<td class="wphc-col-detail">
+							<td class="wphc-col-detail wphc-full-col">
 								<?php echo esc_html( $issue['detail'] ); ?>
 							</td>
-							<td class="wphc-col-modified">
+							<td class="wphc-col-modified wphc-full-col">
 								<?php if ( ! empty( $issue['last_modified'] ) ) : ?>
 									<span title="<?php echo esc_attr( gmdate( 'Y-m-d H:i', $issue['last_modified'] ) ); ?>">
 										<?php echo esc_html( human_time_diff( $issue['last_modified'], time() ) . ' ' . __( 'ago', 'wc-product-health-check' ) ); ?>
@@ -439,9 +456,10 @@ class WPHC_Admin_Page {
 			<tfoot>
 				<tr>
 					<th scope="col"><?php esc_html_e( 'Product', 'wc-product-health-check' ); ?></th>
-					<th scope="col"><?php esc_html_e( 'Issue Type', 'wc-product-health-check' ); ?></th>
-					<th scope="col"><?php esc_html_e( 'Detail', 'wc-product-health-check' ); ?></th>
-					<th scope="col"><?php esc_html_e( 'Last Modified', 'wc-product-health-check' ); ?></th>
+					<th scope="col"><?php esc_html_e( 'SKU', 'wc-product-health-check' ); ?></th>
+					<th scope="col" class="wphc-full-col"><?php esc_html_e( 'Issue Type', 'wc-product-health-check' ); ?></th>
+					<th scope="col" class="wphc-full-col"><?php esc_html_e( 'Detail', 'wc-product-health-check' ); ?></th>
+					<th scope="col" class="wphc-full-col"><?php esc_html_e( 'Last Modified', 'wc-product-health-check' ); ?></th>
 					<th scope="col"><?php esc_html_e( 'Actions', 'wc-product-health-check' ); ?></th>
 				</tr>
 			</tfoot>

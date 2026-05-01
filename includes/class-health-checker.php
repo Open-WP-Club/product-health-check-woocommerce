@@ -409,10 +409,12 @@ class WPHC_Health_Checker {
 	private function make_issue( WC_Product $product, string $type, string $detail, string $severity = 'warning', ?int $variation_id = null ): array {
 		$post          = get_post( $product->get_id() );
 		$last_modified = $post instanceof WP_Post ? strtotime( $post->post_modified ) : 0;
+		$sku           = $product->get_sku();
 
 		return array(
 			'product_id'    => $product->get_id(),
 			'product_name'  => $product->get_name(),
+			'sku'           => $sku,
 			'edit_url'      => get_edit_post_link( $product->get_id() ),
 			'type'          => $type,
 			'severity'      => $severity,

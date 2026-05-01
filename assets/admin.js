@@ -24,6 +24,7 @@
 
 	var pageSize    = parseInt( data.pageSize, 10 ) || 50;
 	var currentPage = 1;
+	var currentView = 'full';
 
 	/* -------------------------------------------------------------------------
 	   Scan helpers
@@ -85,6 +86,7 @@
 
 				currentPage = 1;
 				applyFilter( $filterSel.val() );
+				applyView( currentView );
 
 				if ( response.data.skuCount > 0 ) {
 					$skuTextarea.val( response.data.skus );
@@ -201,6 +203,28 @@
 			'?action=' + encodeURIComponent( data.csvAction ) +
 			'&nonce='  + encodeURIComponent( data.csvNonce );
 		window.location.href = url;
+	} );
+
+	/* -------------------------------------------------------------------------
+	   View toggle (Full / SKU only)
+	------------------------------------------------------------------------- */
+
+	function applyView( view ) {
+		currentView = view;
+		var $table = $( '.wphc-issues-table' );
+
+		$( '.wphc-view-btn' ).removeClass( 'wphc-view-btn--active' );
+		$( '.wphc-view-btn[data-view="' + view + '"]' ).addClass( 'wphc-view-btn--active' );
+
+		if ( 'sku' === view ) {
+			$table.addClass( 'wphc-view-sku-only' );
+		} else {
+			$table.removeClass( 'wphc-view-sku-only' );
+		}
+	}
+
+	$( document ).on( 'click', '.wphc-view-btn', function () {
+		applyView( $( this ).data( 'view' ) );
 	} );
 
 	/* -------------------------------------------------------------------------
