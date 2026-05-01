@@ -21,53 +21,33 @@ jobs:
         id: version
         run: echo "VERSION=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
 
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.3'
-          tools: composer:v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-
-      - name: Install Composer dependencies (production)
-        run: composer install --no-dev --optimize-autoloader --no-interaction
-
-      - name: Install npm dependencies
-        run: npm ci
-
-      - name: Build assets
-        run: npm run build
-
-      - name: Update version in plugin files
+      - name: Update version in plugin file
         env:
           PLUGIN_VERSION: ${{ steps.version.outputs.VERSION }}
         run: |
-          sed -i "s/Version:           .*/Version:           ${PLUGIN_VERSION}/" static-export-wp.php
-          sed -i "s/define( 'SEWP_VERSION', '.*' );/define( 'SEWP_VERSION', '${PLUGIN_VERSION}' );/" static-export-wp.php
-          sed -i "s/Stable tag: .*/Stable tag: ${PLUGIN_VERSION}/" readme.txt
+          sed -i "s/Version:           .*/Version:           ${PLUGIN_VERSION}/" wc-product-health-check.php
+          sed -i "s/define( 'WPHC_VERSION', '.*' );/define( 'WPHC_VERSION', '${PLUGIN_VERSION}' );/" wc-product-health-check.php
 
       - name: Create plugin directory
         run: |
-          mkdir -p dist/static-export-wp
+          mkdir -p dist/product-health-check-woocommerce
           rsync -av \
-            --exclude-from='.distignore' \
-            --exclude='.phpunit.cache' \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='.vscode' \
             --exclude='dist' \
-            ./ dist/static-export-wp/
+            --exclude='README.md' \
+            ./ dist/product-health-check-woocommerce/
 
       - name: Generate ZIP
         env:
           PLUGIN_VERSION: ${{ steps.version.outputs.VERSION }}
         working-directory: dist
-        run: zip -r "../static-export-wp-${PLUGIN_VERSION}.zip" static-export-wp/
+        run: zip -r "../product-health-check-woocommerce-${PLUGIN_VERSION}.zip" product-health-check-woocommerce/
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           name: ${{ steps.version.outputs.VERSION }}
           generate_release_notes: true
-          files: static-export-wp-${{ steps.version.outputs.VERSION }}.zip
+          files: product-health-check-woocommerce-${{ steps.version.outputs.VERSION }}.zip

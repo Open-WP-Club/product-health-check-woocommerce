@@ -133,19 +133,26 @@
 }
 
 .wphc-issues-table .wphc-col-product {
-	width: 25%;
+	width: 22%;
 }
 
 .wphc-issues-table .wphc-col-type {
-	width: 18%;
+	width: 16%;
 }
 
 .wphc-issues-table .wphc-col-detail {
-	width: 42%;
+	width: 37%;
+}
+
+.wphc-issues-table .wphc-col-modified {
+	width: 13%;
+	font-size: 12px;
+	color: #646970;
+	white-space: nowrap;
 }
 
 .wphc-issues-table .wphc-col-actions {
-	width: 15%;
+	width: 12%;
 }
 
 .wphc-issues-table tbody tr {
@@ -328,9 +335,24 @@
 	box-sizing: border-box;
 }
 
-/* Hidden rows (filtered out)
+/* Pagination
    ========================================================================== */
-.wphc-issues-table tbody tr.wphc-hidden {
+.wphc-pagination {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-top: 12px;
+}
+
+.wphc-page-label {
+	font-size: 13px;
+	color: #646970;
+}
+
+/* Hidden rows (filtered out or paginated)
+   ========================================================================== */
+.wphc-issues-table tbody tr.wphc-hidden,
+.wphc-issues-table tbody tr.wphc-filtered {
 	display: none;
 }
 
@@ -374,10 +396,11 @@
 		color: #3c434a;
 	}
 
-	.wphc-issues-table tbody td.wphc-col-product::before { content: "Product: "; }
-	.wphc-issues-table tbody td.wphc-col-type::before    { content: "Type: "; }
-	.wphc-issues-table tbody td.wphc-col-detail::before  { content: "Detail: "; }
-	.wphc-issues-table tbody td.wphc-col-actions::before { content: ""; }
+	.wphc-issues-table tbody td.wphc-col-product::before  { content: "Product: "; }
+	.wphc-issues-table tbody td.wphc-col-type::before     { content: "Type: "; }
+	.wphc-issues-table tbody td.wphc-col-detail::before   { content: "Detail: "; }
+	.wphc-issues-table tbody td.wphc-col-modified::before { content: "Last Modified: "; }
+	.wphc-issues-table tbody td.wphc-col-actions::before  { content: ""; }
 
 	.wphc-summary-card {
 		min-width: calc(50% - 6px);

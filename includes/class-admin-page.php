@@ -24,7 +24,9 @@ class WPHC_Admin_Page {
 	 *
 	 * @var string
 	 */
-	const AJAX_ACTION = 'wphc_run_scan';
+	const AJAX_ACTION      = 'wphc_run_scan';
+	const AJAX_CSV_ACTION  = 'wphc_export_csv';
+	const PAGE_SIZE        = 50;
 
 	/**
 	 * Health checker instance.
@@ -47,6 +49,7 @@ class WPHC_Admin_Page {
 		add_action( 'admin_menu', array( $this, 'register_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_action( 'wp_ajax_' . self::AJAX_ACTION, array( $this, 'handle_ajax_scan' ) );
+		add_action( 'wp_ajax_' . self::AJAX_CSV_ACTION, array( $this, 'handle_csv_export' ) );
 	}
 
 	/**
@@ -95,7 +98,10 @@ class WPHC_Admin_Page {
 			array(
 				'ajaxUrl'   => admin_url( 'admin-ajax.php' ),
 				'action'    => self::AJAX_ACTION,
+				'csvAction' => self::AJAX_CSV_ACTION,
 				'nonce'     => wp_create_nonce( self::AJAX_ACTION ),
+				'csvNonce'  => wp_create_nonce( self::AJAX_CSV_ACTION ),
+				'pageSize'  => self::PAGE_SIZE,
 				'i18n'      => array(
 					'scanning'         => __( 'Scanning products…', 'wc-product-health-check' ),
 					'scanComplete'     => __( 'Scan complete.', 'wc-product-health-check' ),
@@ -105,6 +111,7 @@ class WPHC_Admin_Page {
 					'selectAll'        => __( 'Select all', 'wc-product-health-check' ),
 					'deselectAll'      => __( 'Deselect all', 'wc-product-health-check' ),
 					'skus'             => __( 'SKUs', 'wc-product-health-check' ),
+					'pageOf'           => __( 'Page %1$d of %2$d', 'wc-product-health-check' ),
 				),
 			)
 		);
@@ -159,6 +166,51 @@ class WPHC_Admin_Page {
 	}
 
 	/**
+	 * Handle CSV export request.
+	 */
+	public function handle_csv_export(): void {
+		check_ajax_referer( self::AJAX_CSV_ACTION, 'nonce' );
+
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_die( esc_html__( 'Permission denied.', 'wc-product-health-check' ), 403 );
+		}
+
+		$data = get_transient( WPHC_Health_Checker::TRANSIENT_KEY );
+		if ( false === $data || empty( $data['issues'] ) ) {
+			wp_die( esc_html__( 'No scan data available. Please run a scan first.', 'wc-product-health-check' ) );
+		}
+
+		$labels   = WPHC_Health_Checker::get_issue_labels();
+		$filename = 'product-health-check-' . gmdate( 'Y-m-d' ) . '.csv';
+
+		header( 'Content-Type: text/csv; charset=utf-8' );
+		header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
+		header( 'Pragma: no-cache' );
+
+		$output = fopen( 'php://output', 'w' );
+
+		// BOM for Excel UTF-8 compatibility.
+		fwrite( $output, "\xEF\xBB\xBF" );
+
+		fputcsv( $output, array( 'Product ID', 'Product Name', 'Issue Type', 'Severity', 'Detail', 'Last Modified', 'Edit URL' ) );
+
+		foreach ( $data['issues'] as $issue ) {
+			fputcsv( $output, array(
+				$issue['product_id'],
+				$issue['product_name'],
+				$labels[ $issue['type'] ] ?? $issue['type'],
+				ucfirst( $issue['severity'] ),
+				$issue['detail'],
+				$issue['last_modified'] ? gmdate( 'Y-m-d H:i', $issue['last_modified'] ) : '',
+				$issue['edit_url'],
+			) );
+		}
+
+		fclose( $output );
+		exit;
+	}
+
+	/**
 	 * Render the full admin page.
 	 */
 	public function render_page(): void {
@@ -195,6 +247,9 @@ class WPHC_Admin_Page {
 				</button>
 				<button id="wphc-clear-cache" class="button button-secondary">
 					<?php esc_html_e( 'Clear Cache &amp; Re-scan', 'wc-product-health-check' ); ?>
+				</button>
+				<button id="wphc-export-csv" class="button button-secondary" <?php echo ( false === $data ) ? 'disabled' : ''; ?>>
+					<?php esc_html_e( 'Export CSV', 'wc-product-health-check' ); ?>
 				</button>
 
 				<span id="wphc-spinner" class="wphc-spinner" style="display:none;" aria-hidden="true"></span>
@@ -327,6 +382,7 @@ class WPHC_Admin_Page {
 					<th scope="col" class="wphc-col-product"><?php esc_html_e( 'Product', 'wc-product-health-check' ); ?></th>
 					<th scope="col" class="wphc-col-type"><?php esc_html_e( 'Issue Type', 'wc-product-health-check' ); ?></th>
 					<th scope="col" class="wphc-col-detail"><?php esc_html_e( 'Detail', 'wc-product-health-check' ); ?></th>
+					<th scope="col" class="wphc-col-modified"><?php esc_html_e( 'Last Modified', 'wc-product-health-check' ); ?></th>
 					<th scope="col" class="wphc-col-actions"><?php esc_html_e( 'Actions', 'wc-product-health-check' ); ?></th>
 				</tr>
 			</thead>
@@ -351,6 +407,13 @@ class WPHC_Admin_Page {
 							<td class="wphc-col-detail">
 								<?php echo esc_html( $issue['detail'] ); ?>
 							</td>
+							<td class="wphc-col-modified">
+								<?php if ( ! empty( $issue['last_modified'] ) ) : ?>
+									<span title="<?php echo esc_attr( gmdate( 'Y-m-d H:i', $issue['last_modified'] ) ); ?>">
+										<?php echo esc_html( human_time_diff( $issue['last_modified'], time() ) . ' ' . __( 'ago', 'wc-product-health-check' ) ); ?>
+									</span>
+								<?php endif; ?>
+							</td>
 							<td class="wphc-col-actions">
 								<?php if ( ! empty( $issue['edit_url'] ) ) : ?>
 									<a href="<?php echo esc_url( $issue['edit_url'] ); ?>" class="button button-small">
@@ -367,10 +430,12 @@ class WPHC_Admin_Page {
 					<th scope="col"><?php esc_html_e( 'Product', 'wc-product-health-check' ); ?></th>
 					<th scope="col"><?php esc_html_e( 'Issue Type', 'wc-product-health-check' ); ?></th>
 					<th scope="col"><?php esc_html_e( 'Detail', 'wc-product-health-check' ); ?></th>
+					<th scope="col"><?php esc_html_e( 'Last Modified', 'wc-product-health-check' ); ?></th>
 					<th scope="col"><?php esc_html_e( 'Actions', 'wc-product-health-check' ); ?></th>
 				</tr>
 			</tfoot>
 		</table>
+		<div id="wphc-pagination" class="wphc-pagination" style="display:none;"></div>
 		<?php
 	}
 }
