@@ -253,29 +253,38 @@ class WPHC_Admin_Page {
 			</div>
 
 			<div class="wphc-toolbar">
-				<button id="wphc-run-scan" class="button button-primary">
-					<?php esc_html_e( 'Run Scan', 'wc-product-health-check' ); ?>
-				</button>
-				<button id="wphc-clear-cache" class="button button-secondary">
-					<?php esc_html_e( 'Clear Cache &amp; Re-scan', 'wc-product-health-check' ); ?>
-				</button>
-				<button id="wphc-export-csv" class="button button-secondary" <?php echo ( false === $data ) ? 'disabled' : ''; ?>>
-					<?php esc_html_e( 'Export CSV', 'wc-product-health-check' ); ?>
-				</button>
+				<div class="wphc-toolbar-actions">
+					<button id="wphc-run-scan" class="button button-primary">
+						<?php esc_html_e( 'Run Scan', 'wc-product-health-check' ); ?>
+					</button>
+					<button id="wphc-clear-cache" class="button button-secondary">
+						<?php esc_html_e( 'Clear Cache &amp; Re-scan', 'wc-product-health-check' ); ?>
+					</button>
+					<button id="wphc-export-csv" class="button button-secondary" <?php echo ( false === $data ) ? 'disabled' : ''; ?>>
+						<?php esc_html_e( 'Export CSV', 'wc-product-health-check' ); ?>
+					</button>
 
-				<div class="wphc-view-toggle" role="group">
-					<button id="wphc-view-full" class="button wphc-view-btn wphc-view-btn--active" data-view="full">
-						<?php esc_html_e( 'Full view', 'wc-product-health-check' ); ?>
-					</button>
-					<button id="wphc-view-sku" class="button wphc-view-btn" data-view="sku">
-						<?php esc_html_e( 'SKU only', 'wc-product-health-check' ); ?>
-					</button>
+					<div class="wphc-view-toggle" role="group">
+						<button id="wphc-view-full" class="button wphc-view-btn wphc-view-btn--active" data-view="full">
+							<?php esc_html_e( 'Full view', 'wc-product-health-check' ); ?>
+						</button>
+						<button id="wphc-view-sku" class="button wphc-view-btn" data-view="sku">
+							<?php esc_html_e( 'SKU only', 'wc-product-health-check' ); ?>
+						</button>
+					</div>
 				</div>
 
-				<span id="wphc-spinner" class="wphc-spinner" style="display:none;" aria-hidden="true"></span>
-				<span id="wphc-status" class="wphc-status" aria-live="polite"></span>
+				<div class="wphc-toolbar-status">
+					<span id="wphc-spinner" class="wphc-spinner" style="display:none;" aria-hidden="true"></span>
+					<span id="wphc-status" class="wphc-status" aria-live="polite"></span>
+				</div>
 
-				<div class="wphc-filter">
+				<button type="button" id="wphc-filter-toggle" aria-expanded="false" aria-controls="wphc-filter-drawer">
+					<?php esc_html_e( 'Filter issues', 'wc-product-health-check' ); ?>
+					<span class="wphc-filter-toggle-arrow" aria-hidden="true">&#9660;</span>
+				</button>
+
+				<div id="wphc-filter-drawer" class="wphc-filter">
 					<label for="wphc-filter-type"><?php esc_html_e( 'Filter:', 'wc-product-health-check' ); ?></label>
 					<select id="wphc-filter-type">
 						<option value="all"><?php esc_html_e( 'All Issues', 'wc-product-health-check' ); ?></option>

@@ -245,6 +245,18 @@
 	} );
 
 	/* -------------------------------------------------------------------------
+	   Mobile filter drawer toggle
+	------------------------------------------------------------------------- */
+
+	$( '#wphc-filter-toggle' ).on( 'click', function () {
+		var $btn    = $( this );
+		var $drawer = $( '#wphc-filter-drawer' );
+		var open    = $btn.attr( 'aria-expanded' ) === 'true';
+		$btn.attr( 'aria-expanded', open ? 'false' : 'true' );
+		$drawer.toggleClass( 'wphc-filter--open', ! open );
+	} );
+
+	/* -------------------------------------------------------------------------
 	   Scan / clear buttons
 	------------------------------------------------------------------------- */
 

@@ -26,6 +26,11 @@
 	font-size: 13px;
 }
 
+/* Mobile filter toggle — hidden on desktop */
+#wphc-filter-toggle {
+	display: none;
+}
+
 .wphc-spinner {
 	display: inline-block;
 	width: 20px;
@@ -444,9 +449,73 @@
 		flex: 1 1 calc(50% - 6px);
 	}
 
+	/* Toolbar responsive: stack action buttons, move filter into drawer */
+	.wphc-toolbar {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.wphc-toolbar-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
+	.wphc-view-toggle {
+		margin-left: 0;
+	}
+
+	/* Show the filter toggle button */
+	#wphc-filter-toggle {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		width: 100%;
+		justify-content: space-between;
+		background: #f6f7f7;
+		border: 1px solid #dcdcde;
+		border-radius: 4px;
+		padding: 6px 10px;
+		font-size: 13px;
+		color: #3c434a;
+		cursor: pointer;
+		font-weight: 600;
+	}
+
+	#wphc-filter-toggle .wphc-filter-toggle-arrow {
+		font-size: 10px;
+		color: #646970;
+		transition: transform 0.2s ease;
+	}
+
+	#wphc-filter-toggle[aria-expanded="true"] .wphc-filter-toggle-arrow {
+		transform: rotate(180deg);
+	}
+
+	/* Filter drawer */
 	.wphc-filter {
 		margin-left: 0;
 		width: 100%;
+		padding: 10px;
+		background: #f6f7f7;
+		border: 1px solid #dcdcde;
+		border-radius: 4px;
+		display: none;
+	}
+
+	.wphc-filter.wphc-filter--open {
+		display: flex;
+	}
+
+	.wphc-filter select {
+		flex: 1;
+	}
+
+	/* Status row */
+	.wphc-toolbar-status {
+		display: flex;
+		align-items: center;
+		gap: 8px;
 	}
 }
 
@@ -454,5 +523,10 @@
 	.wphc-summary-card {
 		min-width: 100%;
 		flex: 1 1 100%;
+	}
+
+	.wphc-toolbar-actions .button {
+		flex: 1 1 auto;
+		text-align: center;
 	}
 }
