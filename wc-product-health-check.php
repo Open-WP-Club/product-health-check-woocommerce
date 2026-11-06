@@ -2,6 +2,8 @@
 
 /**
  * Plugin Name:       Product Health Check for WooCommerce
+ * WC tested up to: 11.2.2
+ * Tested up to: 7.1.4
  * Plugin URI:        https://github.com/Open-WP-Club/product-health-check-woocommerce
  * Description:       Scans WooCommerce products for common issues such as missing images, empty SKUs, missing prices, and more.
  * Version:           1.2.0
